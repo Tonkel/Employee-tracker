@@ -41,17 +41,64 @@ app.get("/api/view-employees", (req, res) => {
   db.query("SELECT * FROM employees", (err, result) => res.json(result));
 });
 
-// app.get("/view-tables", (req, res) => {
-//   const query = "SHOW TABLES";
+app.get("/api/view-managers", (req, res) => {
+  db.query("SELECT manager FROM employees", (err, result) => res.json(result));
+});
 
-//   db.query(query, (err, response) => {
-//     if (err) {
-//       res.status(500).json(err);
-//     } else {
-//       res.json(response);
-//     }
-//   });
-// });
+app.get("/api/view-only-employees", (req, res) => {
+  db.query("SELECT first_name, last_name FROM employees", (err, result) =>
+    res.json(result)
+  );
+});
+
+//post routes
+app.post("/api/add-department", (req, res) => {
+  db.query(
+    `INSERT INTO departments (department) VALUE ("${req.body.department}")`,
+    (err, result) =>
+      res.json({
+        message: "success",
+        department: req.body.department,
+      })
+  );
+});
+
+app.post("/api/add-role", (req, res) => {
+  db.query(
+    `INSERT INTO roles (title, department, salary) VALUES ("${req.body.title}", "${req.body.department}", "${req.body.salary}")`,
+    (err, result) =>
+      res.json({
+        message: "success",
+        title: req.body.title,
+        department: req.body.department,
+        salary: req.body.salary,
+      })
+  );
+});
+
+app.post("/api/add-employee", (req, res) => {
+  db.query(
+    `INSERT INTO employees (first_name, last_name, title, department, salary, manager) VALUES ("${req.body.first_name}", "${req.body.last_name}", "${req.body.title}", "${req.body.department}", "${req.body.salary}", "${req.body.manager}")`,
+    (err, result) =>
+      res.json({
+        message: "success",
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        title: req.body.title,
+        department: req.body.department,
+        salary: req.body.salary,
+        manager: req.body.manager,
+      })
+  );
+});
+
+//put routes
+app.put("/api/update-employee-role", (req, res) => {
+  db.query(
+    `UPDATE employees SET title = "${req.body.role}" WHERE first_name = "${req.body.first_name}" AND last_name = "${req.body.last_name}"`,
+    (err, result) => res.json({ message: "success", role: req.body.role })
+  );
+});
 
 //so db can be used for queries in routes
 module.exports = db;
